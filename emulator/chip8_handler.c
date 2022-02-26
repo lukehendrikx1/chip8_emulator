@@ -25,7 +25,7 @@ void createSurface(SDL_Window* window) { // Creates a base surface for the windo
         SDL_Surface* surface = NULL;
 
         surface = SDL_GetWindowSurface(window); // Gets the surface from the window
-        SDL_FillRect(surface, NULL, SDL_MapRGB(surface->format, 0xff, 0xff, 0xff)); // Fills it as a black rectangle
+        SDL_FillRect(surface, NULL, SDL_MapRGB(surface->format, 0x00, 0x00, 0x00)); // Fills it as a black rectangle
 
         SDL_UpdateWindowSurface(window); // Updates the window
 }
@@ -40,21 +40,22 @@ int main(int argc, char **argv) {
           // Handle sound
           // Handle timers
         if (argc == 1) {
-                printf("Error: not enough arguments");
+                fprintf(stderr, "Error: not enough arguments\n");
                 exit(1);
         } else if (argc > 2) {
-                printf("Error: too many arguments");
+                fprintf(stderr, "Error: too many arguments\n");
                 exit(1);
         }
 
 	SDL_Window *window = createWindow(); // Creates the window
         createSurface(window);
 
+
         state *s = intializeState(); // Creates the emulator
 
         FILE *program = fopen(argv[1], "rb"); // Opening the file
         if (program == NULL) {
-                printf("Error: file does not exist\n");
+                fprintf(stderr, "Error: file does not exist\n");
                 exit(1);
         }
 
@@ -62,12 +63,12 @@ int main(int argc, char **argv) {
         int programSize = ftell(program);
         fseek(program, 0L, SEEK_SET);
         if (programSize + 0x200 > 0xf00) {
-                printf("Error: program too large for memory\n");
+                fprintf(stderr, "Error: program too large for memory\n");
         }
 
         memcpy(&s->memory[s->programCounter], program, programSize);// Putting program into memory
         
-        fclose(); // Closing file
+        fclose(program); // Closing file
 
 	SDL_Delay(DELAY);
 
